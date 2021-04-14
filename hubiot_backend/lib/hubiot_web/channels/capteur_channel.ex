@@ -2,14 +2,15 @@ defmodule HubiotWeb.CapteurChannel do
   use Phoenix.Channel
   alias Phoenix.Socket.Broadcast
 
-  import Hubiot.PresenceTracker
+  alias Hubiot.PresenceTracker
 
   def join("capteur:" <> location, _message, socket) do
     # name = socket.assigns.name
     name = "adrian"
+    socket = assign(socket, :name, name)
 
-    put(location, name)
-    {:ok, users} = get(location)
+    PresenceTracker.put(location, name)
+    {:ok, users} = PresenceTracker.get(location)
 
     send(self(), {:after_join, name})
     {:ok, %{users: users}, socket}
@@ -23,5 +24,14 @@ defmodule HubiotWeb.CapteurChannel do
   def handle_info({:after_join, name}, socket) do
     broadcast!(socket, "new_user", %{name: name})
     {:noreply, socket}
+  end
+
+  def terminate(_reason, %Phoenix.Socket{topic: topic} = socket) do
+    "capteur:" <> location = topic
+    name = socket.assigns.name
+
+    PresenceTracker.delete(location, name)
+
+    broadcast!(socket, "user_left", %{name: name})
   end
 end
