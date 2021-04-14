@@ -21,6 +21,14 @@ defmodule Hubiot.Iot do
     Repo.all(Donnee)
   end
 
+  def list_locations() do
+    from(d in Donnee,
+      select: d.location
+    )
+    |> distinct(true)
+    |> Repo.all()
+  end
+
   @doc """
   Gets a single donnee.
 
