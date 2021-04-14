@@ -32,7 +32,7 @@ defmodule Capteur.Server do
 
     Req.post!(
       "http://127.0.0.1:4000/api/donnees",
-      {:json, %{donnee: %{number: data, location: location}}}
+      {:json, %{donnee: %{value: data, location: location}}}
     )
 
     Process.send_after(self(), {:send, nil}, 1000)

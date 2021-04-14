@@ -1,9 +1,17 @@
 defmodule HubiotWeb.PageLive do
   use HubiotWeb, :live_view
 
+  alias Hubiot.Iot
+
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, query: "", results: %{})}
+    locations =
+      Iot.list_locations()
+      |> Enum.sort(:asc)
+
+    location = Enum.at(locations, 0)
+    code = generate_qr_code(location)
+    {:ok, assign(socket, location: location, code: code)}
   end
 
   @impl true
@@ -35,5 +43,12 @@ defmodule HubiotWeb.PageLive do
         String.starts_with?(app, query) and not List.starts_with?(desc, ~c"ERTS"),
         into: %{},
         do: {app, vsn}
+  end
+
+  defp generate_qr_code(content) do
+    content
+    |> EQRCode.encode()
+    |> EQRCode.png()
+    |> Base.encode64()
   end
 end
