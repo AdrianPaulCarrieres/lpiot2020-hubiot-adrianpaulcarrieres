@@ -7,7 +7,7 @@ defmodule HubiotWeb.Endpoint do
   @session_options [
     store: :cookie,
     key: "_hubiot_key",
-    signing_salt: "4PA78UVQ"
+    signing_salt: "WKkhYu8n"
   ]
 
   socket "/socket", HubiotWeb.UserSocket,

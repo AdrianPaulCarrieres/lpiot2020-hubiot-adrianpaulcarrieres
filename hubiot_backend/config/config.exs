@@ -13,10 +13,10 @@ config :hubiot,
 # Configures the endpoint
 config :hubiot, HubiotWeb.Endpoint,
   url: [host: "localhost"],
-  secret_key_base: "09lNl/y3JsTmGhD2UbP13VuGeePv3dwk/pFhnncWQAKo8ocKqfXlb7R6nsnFUO9u",
+  secret_key_base: "82WJeIBfUsTJO02ERh393SxRw25erlfOgmdZg5OgZu/D+oC9XhoB93NftbWUjO++",
   render_errors: [view: HubiotWeb.ErrorView, accepts: ~w(html json), layout: false],
   pubsub_server: Hubiot.PubSub,
-  live_view: [signing_salt: "hEIh1U17"]
+  live_view: [signing_salt: "pYPBtP4g"]
 
 # Configures Elixir's Logger
 config :logger, :console,

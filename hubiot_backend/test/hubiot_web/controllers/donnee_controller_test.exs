@@ -5,12 +5,14 @@ defmodule HubiotWeb.DonneeControllerTest do
   alias Hubiot.Iot.Donnee
 
   @create_attrs %{
-    number: 42
+    location: "some location",
+    value: 42
   }
   @update_attrs %{
-    number: 43
+    location: "some updated location",
+    value: 43
   }
-  @invalid_attrs %{number: nil}
+  @invalid_attrs %{location: nil, value: nil}
 
   def fixture(:donnee) do
     {:ok, donnee} = Iot.create_donnee(@create_attrs)
@@ -37,7 +39,8 @@ defmodule HubiotWeb.DonneeControllerTest do
 
       assert %{
                "id" => id,
-               "number" => 42
+               "location" => "some location",
+               "value" => 42
              } = json_response(conn, 200)["data"]
     end
 
@@ -58,7 +61,8 @@ defmodule HubiotWeb.DonneeControllerTest do
 
       assert %{
                "id" => id,
-               "number" => 43
+               "location" => "some updated location",
+               "value" => 43
              } = json_response(conn, 200)["data"]
     end
 

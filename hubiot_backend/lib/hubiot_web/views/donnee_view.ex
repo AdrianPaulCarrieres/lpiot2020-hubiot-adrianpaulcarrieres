@@ -12,8 +12,7 @@ defmodule HubiotWeb.DonneeView do
 
   def render("donnee.json", %{donnee: donnee}) do
     %{id: donnee.id,
-      number: donnee.number,
-      location: donnee.location
-    }
+      value: donnee.value,
+      location: donnee.location}
   end
 end

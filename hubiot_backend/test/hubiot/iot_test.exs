@@ -6,9 +6,9 @@ defmodule Hubiot.IotTest do
   describe "donnees" do
     alias Hubiot.Iot.Donnee
 
-    @valid_attrs %{number: 42}
-    @update_attrs %{number: 43}
-    @invalid_attrs %{number: nil}
+    @valid_attrs %{location: "some location", value: 42}
+    @update_attrs %{location: "some updated location", value: 43}
+    @invalid_attrs %{location: nil, value: nil}
 
     def donnee_fixture(attrs \\ %{}) do
       {:ok, donnee} =
@@ -31,7 +31,8 @@ defmodule Hubiot.IotTest do
 
     test "create_donnee/1 with valid data creates a donnee" do
       assert {:ok, %Donnee{} = donnee} = Iot.create_donnee(@valid_attrs)
-      assert donnee.number == 42
+      assert donnee.location == "some location"
+      assert donnee.value == 42
     end
 
     test "create_donnee/1 with invalid data returns error changeset" do
@@ -41,7 +42,8 @@ defmodule Hubiot.IotTest do
     test "update_donnee/2 with valid data updates the donnee" do
       donnee = donnee_fixture()
       assert {:ok, %Donnee{} = donnee} = Iot.update_donnee(donnee, @update_attrs)
-      assert donnee.number == 43
+      assert donnee.location == "some updated location"
+      assert donnee.value == 43
     end
 
     test "update_donnee/2 with invalid data returns error changeset" do

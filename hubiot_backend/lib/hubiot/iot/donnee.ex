@@ -2,11 +2,9 @@ defmodule Hubiot.Iot.Donnee do
   use Ecto.Schema
   import Ecto.Changeset
 
-  @derive {Jason.Encoder, only: [:number, :location]}
-
   schema "donnees" do
-    field :number, :integer
     field :location, :string
+    field :value, :integer
 
     timestamps()
   end
@@ -14,7 +12,7 @@ defmodule Hubiot.Iot.Donnee do
   @doc false
   def changeset(donnee, attrs) do
     donnee
-    |> cast(attrs, [:number, :location])
-    |> validate_required([:number, :location])
+    |> cast(attrs, [:value, :location])
+    |> validate_required([:value, :location])
   end
 end

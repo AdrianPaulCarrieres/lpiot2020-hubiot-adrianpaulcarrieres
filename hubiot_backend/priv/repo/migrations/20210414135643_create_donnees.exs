@@ -3,7 +3,7 @@ defmodule Hubiot.Repo.Migrations.CreateDonnees do
 
   def change do
     create table(:donnees) do
-      add :number, :integer
+      add :value, :integer
       add :location, :string
 
       timestamps()
