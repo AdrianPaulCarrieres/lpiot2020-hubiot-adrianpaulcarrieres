@@ -12,7 +12,9 @@ defmodule HubiotWeb.DonneeController do
   end
 
   def create(conn, %{"donnee" => donnee_params}) do
-    with {:ok, %Donnee{} = donnee} <- Iot.create_donnee(donnee_params) do
+    with {:ok, %Donnee{location: location} = donnee} <- Iot.create_donnee(donnee_params) do
+      HubiotWeb.Endpoint.broadcast!("capteur:#{location}", "new_data", %{msg: donnee})
+
       conn
       |> put_status(:created)
       |> put_resp_header("location", Routes.donnee_path(conn, :show, donnee))
