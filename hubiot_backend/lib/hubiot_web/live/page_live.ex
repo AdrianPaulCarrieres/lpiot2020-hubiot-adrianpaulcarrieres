@@ -11,39 +11,22 @@ defmodule HubiotWeb.PageLive do
 
     location = Enum.at(locations, 0)
     code = generate_qr_code(location)
-    {:ok, assign(socket, location: location, code: code)}
+    {:ok, assign(socket, location: location, code: code, locations: locations)}
   end
 
-  @impl true
-  def handle_event("suggest", %{"q" => query}, socket) do
-    {:noreply, assign(socket, results: search(query), query: query)}
+  def handle_event("location_selected", %{"location" => location}, socket) do
+    locations =
+      Iot.list_locations()
+      |> Enum.sort(:asc)
+
+    code = generate_qr_code(location)
+    {:noreply, assign(socket, location: location, code: code, locations: locations)}
   end
 
-  @impl true
-  def handle_event("search", %{"q" => query}, socket) do
-    case search(query) do
-      %{^query => vsn} ->
-        {:noreply, redirect(socket, external: "https://hexdocs.pm/#{query}/#{vsn}")}
+  defp selected_attr(country, country),
+    do: "selected=\"selected\""
 
-      _ ->
-        {:noreply,
-         socket
-         |> put_flash(:error, "No dependencies found matching \"#{query}\"")
-         |> assign(results: %{}, query: query)}
-    end
-  end
-
-  defp search(query) do
-    if not HubiotWeb.Endpoint.config(:code_reloader) do
-      raise "action disabled when not in development"
-    end
-
-    for {app, desc, vsn} <- Application.started_applications(),
-        app = to_string(app),
-        String.starts_with?(app, query) and not List.starts_with?(desc, ~c"ERTS"),
-        into: %{},
-        do: {app, vsn}
-  end
+  defp selected_attr(_, _), do: ""
 
   defp generate_qr_code(content) do
     content
