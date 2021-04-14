@@ -2,9 +2,17 @@ defmodule HubiotWeb.CapteurChannel do
   use Phoenix.Channel
   alias Phoenix.Socket.Broadcast
 
-  def join("capteur:" <> _, _message, socket) do
-    send(self(), :after_join)
-    {:ok, socket}
+  import Hubiot.PresenceTracker
+
+  def join("capteur:" <> location, _message, socket) do
+    # name = socket.assigns.name
+    name = "adrian"
+
+    put(location, name)
+    {:ok, users} = get(location)
+
+    send(self(), {:after_join, name})
+    {:ok, %{users: users}, socket}
   end
 
   def handle_info(%Broadcast{topic: _, event: event, payload: payload}, socket) do
@@ -12,7 +20,8 @@ defmodule HubiotWeb.CapteurChannel do
     {:noreply, socket}
   end
 
-  def handle_info(:after_join, socket) do
-    #broadcast!(socket, "new_student", %{game: game})
+  def handle_info({:after_join, name}, socket) do
+    broadcast!(socket, "new_user", %{name: name})
+    {:noreply, socket}
   end
 end

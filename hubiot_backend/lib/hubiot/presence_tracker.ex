@@ -2,10 +2,13 @@ defmodule Hubiot.PresenceTracker do
   use GenServer
 
   # Public api
-  def start(opts) do
+  def start_link(opts) do
     GenServer.start_link(__MODULE__, opts, name: __MODULE__)
   end
 
+  @doc """
+  Put name to location
+  """
   def put(location, name) do
     GenServer.call(__MODULE__, {:put, location, name})
   end

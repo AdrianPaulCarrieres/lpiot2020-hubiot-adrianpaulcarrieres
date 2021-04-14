@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
 
         label = findViewById(R.id.label);
 
-        Uri.Builder url = Uri.parse( "ws://192.168.43.183:4000/socket/websocket" ).buildUpon();
+        Uri.Builder url = Uri.parse( "ws://192.168.1.70:4000/socket/websocket" ).buildUpon();
 
 
         try{
@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
             socket = new Socket(url.build().toString());
             socket.connect();
 
-            channel = socket.chan("room:capteur", null);
+            channel = socket.chan("capteur:location_1", null);
 
             channel.join()
                     .receive("ignore", envelope -> System.out.println("IGNORE"))
