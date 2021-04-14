@@ -14,9 +14,10 @@ defmodule Hubiot.Application do
       # Start the PubSub system
       {Phoenix.PubSub, name: Hubiot.PubSub},
       # Start the Endpoint (http/https)
-      HubiotWeb.Endpoint
+      HubiotWeb.Endpoint,
       # Start a worker by calling: Hubiot.Worker.start_link(arg)
       # {Hubiot.Worker, arg}
+      {Hubiot.PresenceTracker, []}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
