@@ -37,5 +37,10 @@ defmodule Hubiot.PresenceTracker do
     end
   end
 
+  @impl true
+  def handle_call({:get, location}, _from, state) do
+    users = Map.get(state, location)
+    {:reply, {:ok, users}, state}
+  end
 
 end
