@@ -3,7 +3,7 @@ defmodule Capteur.Server do
 
   # Public API
   def start_link(location) do
-    GenServer.start_link(__MODULE__, [location: location])
+    GenServer.start_link(__MODULE__, location: location)
   end
 
   @impl true
@@ -30,7 +30,10 @@ defmodule Capteur.Server do
   def handle_info({:send, _info}, state = %{location: location}) do
     data = Enum.random(1..100)
 
-    Req.post!("http://127.0.0.1:4000/api/donnees", {:json, %{donnee: %{number: data, location: location}}})
+    Req.post!(
+      "http://127.0.0.1:4000/api/donnees",
+      {:json, %{donnee: %{number: data, location: location}}}
+    )
 
     Process.send_after(self(), {:send, nil}, 1000)
 
