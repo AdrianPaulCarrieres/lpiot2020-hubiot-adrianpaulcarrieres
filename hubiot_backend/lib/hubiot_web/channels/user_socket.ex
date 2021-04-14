@@ -2,7 +2,7 @@ defmodule HubiotWeb.UserSocket do
   use Phoenix.Socket
 
   ## Channels
-  # channel "room:*", HubiotWeb.RoomChannel
+  channel "capteur:*", HubiotWeb.RoomChannel
 
   # Socket params are passed from the client and can
   # be used to verify and authenticate a user. After
