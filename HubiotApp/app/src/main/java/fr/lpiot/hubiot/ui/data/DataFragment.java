@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -42,13 +41,10 @@ public class DataFragment extends Fragment {
 
         dataViewModel =
                 new ViewModelProvider(getActivity()).get(DataViewModel.class);
-        dataViewModel.getData().observe(getViewLifecycleOwner(), new Observer<ArrayList<String>>() {
-            @Override
-            public void onChanged(ArrayList<String> list) {
-                data.clear();
-                data.addAll(list);
-                adapter.notifyDataSetChanged();
-            }
+        dataViewModel.getData().observe(getViewLifecycleOwner(), list -> {
+            data.clear();
+            data.addAll(list);
+            adapter.notifyDataSetChanged();
         });
 
         return root;

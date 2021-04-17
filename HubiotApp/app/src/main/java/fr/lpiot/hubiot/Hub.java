@@ -21,6 +21,7 @@ import org.phoenixframework.channels.Socket;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 
 import fr.lpiot.hubiot.ui.data.DataViewModel;
@@ -61,9 +62,9 @@ public class Hub extends AppCompatActivity {
         presenceViewModel = new ViewModelProvider(this).get(PresenceViewModel.class);
         dataViewModel = new ViewModelProvider(this).get(DataViewModel.class);
 
-        Uri.Builder url = Uri.parse( "ws://192.168.1.70:4000/socket/websocket" ).buildUpon();
+        Uri.Builder url = Uri.parse("ws://192.168.1.70:4000/socket/websocket").buildUpon();
 
-        try{
+        try {
 
             socket = new Socket(url.build().toString());
             socket.connect();
@@ -112,10 +113,18 @@ public class Hub extends AppCompatActivity {
             });
 
             channel.on("new_data", envelope -> {
-                String newData = envelope.getPayload().get("data").get("value").asText();
+                String newData = envelope.getPayload().get("data").get("inserted_at").asText() + " - " + envelope.getPayload().get("data").get("value").asText();
                 System.out.println(envelope);
 
+                Collections.sort(this.data);
+
                 this.data.add(newData);
+                int i = 0;
+                while (this.data.size() > 10) {
+                    this.data.remove(i++);
+                }
+
+                Collections.sort(this.data, Collections.reverseOrder());
 
                 runOnUiThread(new Runnable() {
                     @Override
@@ -129,16 +138,6 @@ public class Hub extends AppCompatActivity {
         } catch (IOException e) {
             System.out.println("error");
         }
-
-
-
-
-
-
-
-
-
-
 
 
     }

@@ -2,7 +2,7 @@ defmodule Hubiot.Iot.Donnee do
   use Ecto.Schema
   import Ecto.Changeset
 
-  @derive {Jason.Encoder, only: [:value]}
+  @derive {Jason.Encoder, only: [:value, :inserted_at]}
 
   schema "donnees" do
     field :location, :string
