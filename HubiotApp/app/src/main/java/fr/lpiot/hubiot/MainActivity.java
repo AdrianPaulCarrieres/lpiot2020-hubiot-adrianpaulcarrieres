@@ -30,7 +30,6 @@ public class MainActivity extends AppCompatActivity {
 
         Uri.Builder url = Uri.parse( "ws://192.168.1.70:4000/socket/websocket" ).buildUpon();
 
-
         try{
 
             socket = new Socket(url.build().toString());

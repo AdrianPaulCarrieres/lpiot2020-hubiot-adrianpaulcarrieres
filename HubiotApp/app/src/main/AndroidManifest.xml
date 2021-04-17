@@ -13,7 +13,7 @@
         android:theme="@style/Theme.Hubiot"
         android:usesCleartextTraffic="true">
         <activity
-            android:name=".hub"
+            android:name=".Hub"
             android:label="@string/title_activity_hub"
             android:theme="@style/Theme.Hubiot.NoActionBar">
             <intent-filter>
