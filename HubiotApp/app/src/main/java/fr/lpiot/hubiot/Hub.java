@@ -12,6 +12,7 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.android.material.navigation.NavigationView;
 
 import org.phoenixframework.channels.Channel;
@@ -19,6 +20,7 @@ import org.phoenixframework.channels.Socket;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import fr.lpiot.hubiot.ui.presence.PresenceFragment;
 
@@ -43,7 +45,7 @@ public class Hub extends AppCompatActivity {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow)
+                R.id.nav_home, R.id.nav_presence, R.id.nav_data)
                 .setDrawerLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
@@ -61,9 +63,19 @@ public class Hub extends AppCompatActivity {
 
             channel.join()
                     .receive("ignore", envelope -> System.out.println("IGNORE"))
-                    .receive("ok", envelope -> System.out.println("JOINED with " + envelope.toString()));
+                    .receive("ok", envelope -> {
+                        this.users.clear();
+                        for (Iterator<JsonNode> it = envelope.getPayload().get("response").get("users").iterator(); it.hasNext(); ) {
+                            String user = it.next().asText();
+                            this.users.add(user);
+                        }
+                        PresenceFragment presenceFragment = (PresenceFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_presence);
+                        if(presenceFragment != null) {
+                            presenceFragment.addUsers(this.users);
+                        }
+                    });
 
-            channel.on("new_user", envelope -> {
+            channel.on("user_joined", envelope -> {
                 PresenceFragment presenceFragment = (PresenceFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_presence);
                 String user = envelope.getPayload().get("name").asText();
                 System.out.println("name " + user);
@@ -71,7 +83,19 @@ public class Hub extends AppCompatActivity {
                 this.users.add(user);
 
                 if(presenceFragment != null) {
-                    presenceFragment.addUser(envelope.getPayload().get("name").asText());
+                    presenceFragment.addUser(user);
+                }
+            });
+
+            channel.on("user_left", envelope -> {
+                PresenceFragment presenceFragment = (PresenceFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_presence);
+                String user = envelope.getPayload().get("name").asText();
+                System.out.println("name " + user);
+
+                this.users.remove(user);
+
+                if(presenceFragment != null) {
+                    presenceFragment.removeUser(user);
                 }
             });
 

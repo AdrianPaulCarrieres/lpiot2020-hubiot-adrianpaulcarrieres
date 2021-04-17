@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -58,6 +59,12 @@ public class PresenceFragment extends Fragment {
 
     public void removeUser(String user) {
         this.users.remove(user);
+        adapter.notifyDataSetChanged();
+    }
+
+    public void addUsers(ArrayList<String> users) {
+        this.users.clear();
+        this.users.addAll(users);
         adapter.notifyDataSetChanged();
     }
 }
