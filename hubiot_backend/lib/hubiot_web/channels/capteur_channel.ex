@@ -9,8 +9,8 @@ defmodule HubiotWeb.CapteurChannel do
     name = "adrian"
     socket = assign(socket, :name, name)
 
-    PresenceTracker.put(location, name)
     {:ok, users} = PresenceTracker.get(location)
+    PresenceTracker.put(location, name)
 
     send(self(), {:after_join, name})
     {:ok, %{users: users}, socket}
