@@ -23,7 +23,7 @@ defmodule HubiotWeb.CapteurChannel do
   end
 
   def handle_info({:after_join, name}, socket) do
-    broadcast!(socket, "new_user", %{name: name})
+    broadcast!(socket, "user_joined", %{name: name})
     {:noreply, socket}
   end
 
