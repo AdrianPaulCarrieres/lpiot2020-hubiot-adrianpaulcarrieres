@@ -7,6 +7,7 @@ import android.view.Menu;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -22,8 +23,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import fr.lpiot.hubiot.ui.data.DataFragment;
-import fr.lpiot.hubiot.ui.presence.PresenceFragment;
+import fr.lpiot.hubiot.ui.presence.PresenceViewModel;
 
 public class Hub extends AppCompatActivity {
 
@@ -34,6 +34,8 @@ public class Hub extends AppCompatActivity {
 
     private ArrayList<String> users = new ArrayList<>();
     private String data = "Awaiting new data :)";
+
+    private PresenceViewModel presenceViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +56,8 @@ public class Hub extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
 
+        presenceViewModel = new ViewModelProvider(this).get(PresenceViewModel.class);
+
         Uri.Builder url = Uri.parse( "ws://192.168.1.70:4000/socket/websocket" ).buildUpon();
 
         try{
@@ -71,43 +75,36 @@ public class Hub extends AppCompatActivity {
                             String user = it.next().asText();
                             this.users.add(user);
                         }
-                        PresenceFragment presenceFragment = (PresenceFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_presence);
-                        if(presenceFragment != null) {
-                            presenceFragment.addUsers(this.users);
-                        }
+                        System.out.println(presenceViewModel == null);
+                        presenceViewModel.getData().postValue(users);
                     });
 
             channel.on("user_joined", envelope -> {
-                PresenceFragment presenceFragment = (PresenceFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_presence);
                 String user = envelope.getPayload().get("name").asText();
                 System.out.println("name " + user);
 
                 this.users.add(user);
-
-                if(presenceFragment != null) {
-                    presenceFragment.addUser(user);
-                }
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        presenceViewModel.getData().setValue(users);
+                        System.out.println(presenceViewModel.getData().getValue().toString());
+                    }
+                });
             });
 
             channel.on("user_left", envelope -> {
-                PresenceFragment presenceFragment = (PresenceFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_presence);
                 String user = envelope.getPayload().get("name").asText();
                 System.out.println("name " + user);
 
                 this.users.remove(user);
 
-                if(presenceFragment != null) {
-                    presenceFragment.removeUser(user);
-                }
+
+
             });
 
             channel.on("new_data", envelope -> {
-                DataFragment dataFragment = (DataFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_data);
                 this.data = envelope.getPayload().get("data").asText();
-
-                if(dataFragment != null) {
-                    dataFragment.setData(data);
-                }
             });
 
         } catch (IOException e) {

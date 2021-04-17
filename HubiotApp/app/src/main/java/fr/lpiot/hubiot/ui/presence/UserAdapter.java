@@ -8,18 +8,22 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.List;
+import java.util.ArrayList;
 
 import fr.lpiot.hubiot.R;
 
 public class UserAdapter extends RecyclerView.Adapter<UserViewHolder> {
 
     //For DATA
-    private List<String> users;
+    private ArrayList<String> users;
 
     //Constructor
-    public UserAdapter(List<String> users) {
+    public UserAdapter(ArrayList<String> users) {
         this.users = users;
+    }
+
+    public UserAdapter() {
+        this.users = new ArrayList<>();
     }
 
     @NonNull
@@ -40,6 +44,9 @@ public class UserAdapter extends RecyclerView.Adapter<UserViewHolder> {
 
     @Override
     public int getItemCount() {
+        if (this.users == null) {
+            this.users = new ArrayList<>();
+        }
         return this.users.size();
     }
 }

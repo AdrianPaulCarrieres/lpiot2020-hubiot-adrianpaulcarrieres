@@ -7,15 +7,15 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import fr.lpiot.hubiot.Hub;
 import fr.lpiot.hubiot.R;
 
 public class PresenceFragment extends Fragment {
@@ -25,10 +25,13 @@ public class PresenceFragment extends Fragment {
     RecyclerView recyclerView;
 
     //For data
-    private List<String> users;
+    private ArrayList<String> users;
     private UserAdapter adapter;
+    private PresenceViewModel presenceViewModel;
 
-    public PresenceFragment() {}
+
+    public PresenceFragment() {
+    }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -36,14 +39,29 @@ public class PresenceFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_presence, container, false);
 
         ButterKnife.bind(this, root);
+
         this.configureRecyclerView();
+
+        presenceViewModel = new ViewModelProvider(getActivity()).get(PresenceViewModel.class);
+        presenceViewModel.getData().observe(getViewLifecycleOwner(), new Observer<ArrayList<String>>() {
+            @Override
+            public void onChanged(ArrayList<String> list) {
+                System.out.println("heeeey" + list.toString());
+                users.clear();
+                users.addAll(list);
+                System.out.println("users list in presence fragment is " + users.toString());
+                adapter.notifyDataSetChanged();
+            }
+        });
 
         return root;
     }
 
-    private void configureRecyclerView(){
-        Hub hub = (Hub) getActivity();
-        this.users = hub.getUsers();
+    private void configureRecyclerView() {
+        //Hub hub = (Hub) getActivity();
+        //this.users = hub.getUsers();
+
+        this.users = new ArrayList<>();
 
         this.adapter = new UserAdapter(this.users);
 
