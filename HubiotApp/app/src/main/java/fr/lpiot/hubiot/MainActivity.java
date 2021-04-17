@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
-            } catch (IOException e) {
+        } catch (IOException e) {
             System.out.println("error");
         }
     }
