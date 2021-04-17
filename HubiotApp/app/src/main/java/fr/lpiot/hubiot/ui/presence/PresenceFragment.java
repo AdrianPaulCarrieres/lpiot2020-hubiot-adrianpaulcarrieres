@@ -1,4 +1,4 @@
-package fr.lpiot.hubiot.ui.gallery;
+package fr.lpiot.hubiot.ui.presence;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -14,17 +14,17 @@ import androidx.lifecycle.ViewModelProvider;
 
 import fr.lpiot.hubiot.R;
 
-public class GalleryFragment extends Fragment {
+public class PresenceFragment extends Fragment {
 
-    private GalleryViewModel galleryViewModel;
+    private PresenceViewModel presenceViewModel;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        galleryViewModel =
-                new ViewModelProvider(this).get(GalleryViewModel.class);
-        View root = inflater.inflate(R.layout.fragment_gallery, container, false);
-        final TextView textView = (TextView) root.findViewById(R.id.text_gallery);
-        galleryViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
+        presenceViewModel =
+                new ViewModelProvider(this).get(PresenceViewModel.class);
+        View root = inflater.inflate(R.layout.fragment_presence, container, false);
+        final TextView textView = (TextView) root.findViewById(R.id.text_presence);
+        presenceViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
                 textView.setText(s);

@@ -1,14 +1,14 @@
-package fr.lpiot.hubiot.ui.gallery;
+package fr.lpiot.hubiot.ui.presence;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-public class GalleryViewModel extends ViewModel {
+public class PresenceViewModel extends ViewModel {
 
     private MutableLiveData<String> mText;
 
-    public GalleryViewModel() {
+    public PresenceViewModel() {
         mText = new MutableLiveData<>();
         mText.setValue("This is gallery fragment");
     }
