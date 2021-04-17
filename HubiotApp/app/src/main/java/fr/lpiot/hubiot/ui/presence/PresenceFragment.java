@@ -4,32 +4,59 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import fr.lpiot.hubiot.R;
 
 public class PresenceFragment extends Fragment {
 
-    private PresenceViewModel presenceViewModel;
+    //For design
+    @BindView(R.id.fragment_presence_recycler_view)
+    RecyclerView recyclerView;
+
+    //For data
+    private List<String> users;
+    private UserAdapter adapter;
+
+    public PresenceFragment() {}
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        presenceViewModel =
-                new ViewModelProvider(this).get(PresenceViewModel.class);
+
         View root = inflater.inflate(R.layout.fragment_presence, container, false);
-        final TextView textView = null;
-        presenceViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-                textView.setText(s);
-            }
-        });
+
+        ButterKnife.bind(this, root);
+        this.configureRecyclerView();
+
         return root;
+    }
+
+    private void configureRecyclerView(){
+        this.users = new ArrayList<>();
+
+        this.adapter = new UserAdapter(this.users);
+
+        this.recyclerView.setAdapter(this.adapter);
+
+        this.recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+    }
+
+    public void addUser(String user) {
+        this.users.add(user);
+        adapter.notifyDataSetChanged();
+    }
+
+    public void removeUser(String user) {
+        this.users.remove(user);
+        adapter.notifyDataSetChanged();
     }
 }
