@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import fr.lpiot.hubiot.ui.data.DataViewModel;
 import fr.lpiot.hubiot.ui.presence.PresenceViewModel;
 
 public class Hub extends AppCompatActivity {
@@ -33,9 +34,10 @@ public class Hub extends AppCompatActivity {
     private Channel channel;
 
     private ArrayList<String> users = new ArrayList<>();
-    private String data = "Awaiting new data :)";
+    private ArrayList<String> data = new ArrayList<>();
 
     private PresenceViewModel presenceViewModel;
+    private DataViewModel dataViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +59,7 @@ public class Hub extends AppCompatActivity {
         NavigationUI.setupWithNavController(navigationView, navController);
 
         presenceViewModel = new ViewModelProvider(this).get(PresenceViewModel.class);
+        dataViewModel = new ViewModelProvider(this).get(DataViewModel.class);
 
         Uri.Builder url = Uri.parse( "ws://192.168.1.70:4000/socket/websocket" ).buildUpon();
 
@@ -109,7 +112,18 @@ public class Hub extends AppCompatActivity {
             });
 
             channel.on("new_data", envelope -> {
-                this.data = envelope.getPayload().get("data").asText();
+                String newData = envelope.getPayload().get("data").get("value").asText();
+                System.out.println(envelope);
+
+                this.data.add(newData);
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        dataViewModel.getData().setValue(data);
+                        System.out.println(dataViewModel.getData().getValue().toString());
+                    }
+                });
             });
 
         } catch (IOException e) {
