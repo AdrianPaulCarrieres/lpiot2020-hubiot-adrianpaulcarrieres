@@ -1,4 +1,4 @@
-package fr.lpiot.hubiot.ui.slideshow;
+package fr.lpiot.hubiot.ui.data;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -14,15 +14,17 @@ import androidx.lifecycle.ViewModelProvider;
 
 import fr.lpiot.hubiot.R;
 
-public class SlideshowFragment extends Fragment {
+public class DataFragment extends Fragment {
 
-    private SlideshowViewModel slideshowViewModel;
+    private DataViewModel slideshowViewModel;
+
+    private String data;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         slideshowViewModel =
-                new ViewModelProvider(this).get(SlideshowViewModel.class);
-        View root = inflater.inflate(R.layout.fragment_slideshow, container, false);
+                new ViewModelProvider(this).get(DataViewModel.class);
+        View root = inflater.inflate(R.layout.fragment_data, container, false);
         final TextView textView = (TextView) root.findViewById(R.id.text_slideshow);
         slideshowViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
@@ -31,5 +33,13 @@ public class SlideshowFragment extends Fragment {
             }
         });
         return root;
+    }
+
+    public String getData() {
+        return data;
+    }
+
+    public void setData(String data) {
+        this.data = data;
     }
 }

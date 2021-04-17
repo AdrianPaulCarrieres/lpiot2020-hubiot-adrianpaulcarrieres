@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import fr.lpiot.hubiot.ui.data.DataFragment;
 import fr.lpiot.hubiot.ui.presence.PresenceFragment;
 
 public class Hub extends AppCompatActivity {
@@ -32,6 +33,7 @@ public class Hub extends AppCompatActivity {
     private Channel channel;
 
     private ArrayList<String> users = new ArrayList<>();
+    private String data = "Awaiting new data :)";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,6 +98,15 @@ public class Hub extends AppCompatActivity {
 
                 if(presenceFragment != null) {
                     presenceFragment.removeUser(user);
+                }
+            });
+
+            channel.on("new_data", envelope -> {
+                DataFragment dataFragment = (DataFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_data);
+                this.data = envelope.getPayload().get("data").asText();
+
+                if(dataFragment != null) {
+                    dataFragment.setData(data);
                 }
             });
 
