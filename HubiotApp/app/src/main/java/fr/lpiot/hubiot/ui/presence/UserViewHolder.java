@@ -19,4 +19,8 @@ public class UserViewHolder extends RecyclerView.ViewHolder {
         super(itemView);
         ButterKnife.bind(this, itemView);
     }
+
+    public void updateWithUser(String user) {
+        this.textView.setText(user);
+    }
 }

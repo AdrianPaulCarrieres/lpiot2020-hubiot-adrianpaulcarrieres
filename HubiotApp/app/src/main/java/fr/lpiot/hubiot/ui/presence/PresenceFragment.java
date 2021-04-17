@@ -23,7 +23,7 @@ public class PresenceFragment extends Fragment {
         presenceViewModel =
                 new ViewModelProvider(this).get(PresenceViewModel.class);
         View root = inflater.inflate(R.layout.fragment_presence, container, false);
-        final TextView textView = (TextView) root.findViewById(R.id.text_presence);
+        final TextView textView = null;
         presenceViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
