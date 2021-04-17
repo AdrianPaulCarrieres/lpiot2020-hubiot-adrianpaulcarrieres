@@ -14,6 +14,7 @@ defmodule HubiotWeb.PageLive do
     {:ok, assign(socket, location: location, code: code, locations: locations)}
   end
 
+  @impl true
   def handle_event("location_selected", %{"location" => location}, socket) do
     locations =
       Iot.list_locations()

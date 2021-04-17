@@ -19,6 +19,6 @@ defmodule Capteur.Application do
     Supervisor.start_link(children, opts)
 
     Capteur.Server.start_link("salle_1")
-    Capteur.Server.start_link("salle_2")
+    #Capteur.Server.start_link("salle_2")
   end
 end

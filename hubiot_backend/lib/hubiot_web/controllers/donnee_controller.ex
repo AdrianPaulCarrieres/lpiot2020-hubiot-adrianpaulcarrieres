@@ -13,6 +13,7 @@ defmodule HubiotWeb.DonneeController do
 
   def create(conn, %{"donnee" => donnee_params}) do
     with {:ok, %Donnee{location: location} = donnee} <- Iot.create_donnee(donnee_params) do
+      IO.inspect("capteur:#{location}")
       HubiotWeb.Endpoint.broadcast!("capteur:#{location}", "new_data", %{msg: donnee})
 
       conn

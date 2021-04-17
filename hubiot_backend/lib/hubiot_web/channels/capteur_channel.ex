@@ -17,6 +17,7 @@ defmodule HubiotWeb.CapteurChannel do
   end
 
   def handle_info(%Broadcast{topic: _, event: event, payload: payload}, socket) do
+    IO.inspect(payload, label: "capteur_channel.ex line 20")
     push(socket, event, payload)
     {:noreply, socket}
   end
