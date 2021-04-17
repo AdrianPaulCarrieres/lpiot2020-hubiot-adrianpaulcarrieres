@@ -53,7 +53,6 @@ public class PresenceFragment extends Fragment {
                 adapter.notifyDataSetChanged();
             }
         });
-
         return root;
     }
 

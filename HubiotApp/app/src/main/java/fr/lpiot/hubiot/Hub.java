@@ -99,8 +99,13 @@ public class Hub extends AppCompatActivity {
 
                 this.users.remove(user);
 
-
-
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        presenceViewModel.getData().setValue(users);
+                        System.out.println(presenceViewModel.getData().getValue().toString());
+                    }
+                });
             });
 
             channel.on("new_data", envelope -> {
