@@ -28,6 +28,7 @@ defmodule HubiotWeb.Router do
     pipe_through :api
 
     resources "/donnees", DonneeController
+    post "/login", LoginController, :login
   end
 
   # Enables LiveDashboard only for development
