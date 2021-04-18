@@ -5,9 +5,9 @@ defmodule HubiotWeb.CapteurChannel do
   alias Hubiot.PresenceTracker
 
   def join("capteur:" <> location, _message, socket) do
-    name = socket.assigns.name
-    #name = "adrian"
-    #socket = assign(socket, :name, name)
+    # name = socket.assigns.name
+    name = "adrian"
+    socket = assign(socket, :name, name)
 
     {:ok, users} = PresenceTracker.get(location)
     PresenceTracker.put(location, name)
