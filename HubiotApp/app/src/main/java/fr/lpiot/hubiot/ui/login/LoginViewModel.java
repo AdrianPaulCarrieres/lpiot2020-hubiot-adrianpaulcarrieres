@@ -1,15 +1,15 @@
 package fr.lpiot.hubiot.ui.login;
 
+import android.util.Patterns;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import android.util.Patterns;
-
+import fr.lpiot.hubiot.R;
 import fr.lpiot.hubiot.data.LoginRepository;
 import fr.lpiot.hubiot.data.Result;
 import fr.lpiot.hubiot.data.model.LoggedInUser;
-import fr.lpiot.hubiot.R;
 
 public class LoginViewModel extends ViewModel {
 
@@ -35,7 +35,7 @@ public class LoginViewModel extends ViewModel {
 
         if (result instanceof Result.Success) {
             LoggedInUser data = ((Result.Success<LoggedInUser>) result).getData();
-            loginResult.setValue(new LoginResult(new LoggedInUserView(data.getDisplayName())));
+            loginResult.setValue(new LoginResult(new LoggedInUserView(data.getToken())));
         } else {
             loginResult.setValue(new LoginResult(R.string.login_failed));
         }

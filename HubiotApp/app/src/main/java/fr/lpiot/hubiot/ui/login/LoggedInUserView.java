@@ -4,14 +4,17 @@ package fr.lpiot.hubiot.ui.login;
  * Class exposing authenticated user details to the UI.
  */
 class LoggedInUserView {
-    private String displayName;
-    //... other data fields that may be accessible to the UI
+    private String token;
 
-    LoggedInUserView(String displayName) {
-        this.displayName = displayName;
+    public String getToken() {
+        return token;
     }
 
-    String getDisplayName() {
-        return displayName;
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public LoggedInUserView(String token) {
+        this.token = token;
     }
 }
