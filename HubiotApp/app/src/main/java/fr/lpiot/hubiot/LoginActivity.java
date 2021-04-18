@@ -24,24 +24,26 @@ public class LoginActivity extends AppCompatActivity {
         textViewMotDePasse = findViewById(R.id.mdp);
     }
 
-    private void afficherToast(String message){
+    private void afficherToast(String message) {
         Toast t = Toast.makeText(this, message, Toast.LENGTH_SHORT);
         t.show();
         Log.i("login", "toasted message : " + message);
     }
 
-    public void buttonLoginClick(View v){
+    public void buttonLoginClick(View v) {
         String email = textViewIdentifiant.getText().toString();
         String password = textViewMotDePasse.getText().toString();
 
-        if(!email.equals("") && !password.equals("")) {
-            afficherToast("Tous les champs sont requis");
-        } else {
+        if (!email.equals("") && !password.equals("")) {
             naviguerVersMenu(email, password);
+
+        } else {
+            afficherToast("Tous les champs sont requis");
+
         }
     }
 
-    private void naviguerVersMenu(String email, String password){
+    private void naviguerVersMenu(String email, String password) {
         //Passer au prochain écran -> pour le test on va faire la création
         Intent intent = new Intent(this, Qr.class);
         intent.putExtra("email", email);

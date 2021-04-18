@@ -35,6 +35,8 @@ public class Hub extends AppCompatActivity {
 
     private PresenceViewModel presenceViewModel;
     private DataViewModel dataViewModel;
+    private String email;
+    private String password;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,15 +60,24 @@ public class Hub extends AppCompatActivity {
         presenceViewModel = new ViewModelProvider(this).get(PresenceViewModel.class);
         dataViewModel = new ViewModelProvider(this).get(DataViewModel.class);
 
+
+        Bundle parameters = this.getIntent().getExtras();
+        String location = parameters.get("location").toString();
+
+        this.email = parameters.get("email").toString();
+        this.password = parameters.get("password").toString();
+
         Uri.Builder url = Uri.parse("ws://192.168.1.70:4000/socket/websocket").buildUpon();
+        url.appendQueryParameter( "email", email );
+        url.appendQueryParameter( "password", password );
+
 
         try {
 
             Socket socket = new Socket(url.build().toString());
             socket.connect();
 
-            Bundle parameters = this.getIntent().getExtras();
-            String location = parameters.get("location").toString();
+
 
             Channel channel = socket.chan("capteur:" + location, null);
 

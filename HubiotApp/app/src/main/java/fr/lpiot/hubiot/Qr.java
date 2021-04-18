@@ -16,12 +16,14 @@ import com.google.zxing.integration.android.IntentResult;
 
 public class Qr extends AppCompatActivity {
 
-    ImageView imageView;
-    Button button;
-    Button btnScan;
-    EditText editText;
+    private ImageView imageView;
+    private Button btnScan;
+    private EditText editText;
 
-    TextView tv_qr_readTxt;
+    private TextView tv_qr_readTxt;
+
+    private String email;
+    private String password;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +46,10 @@ public class Qr extends AppCompatActivity {
             integrator.initiateScan();
 
         });
+
+        Bundle parameters = this.getIntent().getExtras();
+        this.email = parameters.get("email").toString();
+        this.password = parameters.get("password").toString();
     }
 
     @Override
@@ -70,6 +76,8 @@ public class Qr extends AppCompatActivity {
     private void navigateToHome(String location){
         Intent intent = new Intent(this, Hub.class);
         intent.putExtra("location", location);
+        intent.putExtra("email", this.email);
+        intent.putExtra("password", this.password);
         startActivity(intent);
     }
 }
