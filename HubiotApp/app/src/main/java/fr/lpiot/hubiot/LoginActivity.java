@@ -31,11 +31,11 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void buttonLoginClick(View v) {
-        String email = textViewIdentifiant.getText().toString();
+        String name = textViewIdentifiant.getText().toString();
         String password = textViewMotDePasse.getText().toString();
 
-        if (!email.equals("") && !password.equals("")) {
-            naviguerVersMenu(email, password);
+        if (!name.equals("") && !password.equals("")) {
+            naviguerVersMenu(name, password);
 
         } else {
             afficherToast("Tous les champs sont requis");
@@ -43,10 +43,10 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    private void naviguerVersMenu(String email, String password) {
+    private void naviguerVersMenu(String name, String password) {
         //Passer au prochain écran -> pour le test on va faire la création
         Intent intent = new Intent(this, Qr.class);
-        intent.putExtra("email", email);
+        intent.putExtra("name", name);
         intent.putExtra("password", password);
         startActivity(intent);
     }

@@ -22,7 +22,7 @@ public class Qr extends AppCompatActivity {
 
     private TextView tv_qr_readTxt;
 
-    private String email;
+    private String name;
     private String password;
 
     @Override
@@ -48,7 +48,7 @@ public class Qr extends AppCompatActivity {
         });
 
         Bundle parameters = this.getIntent().getExtras();
-        this.email = parameters.get("email").toString();
+        this.name = parameters.get("name").toString();
         this.password = parameters.get("password").toString();
     }
 
@@ -76,7 +76,7 @@ public class Qr extends AppCompatActivity {
     private void navigateToHome(String location){
         Intent intent = new Intent(this, Hub.class);
         intent.putExtra("location", location);
-        intent.putExtra("email", this.email);
+        intent.putExtra("name", this.name);
         intent.putExtra("password", this.password);
         startActivity(intent);
     }

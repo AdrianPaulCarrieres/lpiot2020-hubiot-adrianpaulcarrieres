@@ -1,8 +1,10 @@
 package fr.lpiot.hubiot;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuItem;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -62,11 +64,11 @@ public class Hub extends AppCompatActivity {
         Bundle parameters = this.getIntent().getExtras();
         String location = parameters.get("location").toString();
 
-        String email = parameters.get("email").toString();
+        String name = parameters.get("name").toString();
         String password = parameters.get("password").toString();
 
         Uri.Builder url = Uri.parse("ws://192.168.1.70:4000/socket/websocket").buildUpon();
-        url.appendQueryParameter( "email", email);
+        url.appendQueryParameter( "name", name);
         url.appendQueryParameter( "password", password);
 
 
@@ -153,5 +155,11 @@ public class Hub extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
+    }
+
+
+    public void logout(MenuItem item) {
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
     }
 }

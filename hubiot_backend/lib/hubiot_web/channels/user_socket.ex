@@ -17,11 +17,11 @@ defmodule HubiotWeb.UserSocket do
   # performing token verification on connect.
   @impl true
   def connect(params, socket, _connect_info) do
-    %{"email" => email, "password" => password} = params
+    %{"name" => name, "password" => password} = params
 
-    case Hubiot.Accounts.get_user_by_email_and_password(email, password) do
-      %Hubiot.Accounts.User{email: email} ->
-        socket = assign(socket, :name, email)
+    case Hubiot.Accounts.get_user_by_name_and_password(name, password) do
+      %Hubiot.Accounts.User{name: name} ->
+        socket = assign(socket, :name, name)
         {:ok, socket}
 
       _ ->
