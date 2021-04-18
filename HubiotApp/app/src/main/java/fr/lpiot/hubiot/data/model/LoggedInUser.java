@@ -5,19 +5,24 @@ package fr.lpiot.hubiot.data.model;
  */
 public class LoggedInUser {
 
-    private String userId;
-    private String displayName;
+    private String token;
 
-    public LoggedInUser(String userId, String displayName) {
-        this.userId = userId;
-        this.displayName = displayName;
+    @Override
+    public String toString() {
+        return "LoggedInUser{" +
+                "token='" + token + '\'' +
+                '}';
     }
 
-    public String getUserId() {
-        return userId;
+    public String getToken() {
+        return token;
     }
 
-    public String getDisplayName() {
-        return displayName;
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public LoggedInUser(String token) {
+        this.token = token;
     }
 }
