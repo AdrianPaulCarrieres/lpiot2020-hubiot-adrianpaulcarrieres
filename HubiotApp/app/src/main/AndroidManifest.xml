@@ -12,6 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Hubiot"
         android:usesCleartextTraffic="true">
+        <activity android:name=".Qr"></activity>
         <activity
             android:name=".Hub"
             android:label="@string/title_activity_hub"
@@ -22,8 +23,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity">
-        </activity>
+        <activity android:name=".MainActivity"></activity>
     </application>
 
 </manifest>
