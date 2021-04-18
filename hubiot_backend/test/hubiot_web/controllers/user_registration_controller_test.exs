@@ -21,11 +21,11 @@ defmodule HubiotWeb.UserRegistrationControllerTest do
   describe "POST /users/register" do
     @tag :capture_log
     test "creates account and logs the user in", %{conn: conn} do
-      email = unique_user_email()
+      name = unique_user_name()
 
       conn =
         post(conn, Routes.user_registration_path(conn, :create), %{
-          "user" => valid_user_attributes(email: email)
+          "user" => valid_user_attributes(name: name)
         })
 
       assert get_session(conn, :user_token)
@@ -34,7 +34,7 @@ defmodule HubiotWeb.UserRegistrationControllerTest do
       # Now do a logged in request and assert on the menu
       conn = get(conn, "/")
       response = html_response(conn, 200)
-      assert response =~ email
+      assert response =~ name
       assert response =~ "Settings</a>"
       assert response =~ "Log out</a>"
     end
@@ -42,7 +42,7 @@ defmodule HubiotWeb.UserRegistrationControllerTest do
     test "render errors for invalid data", %{conn: conn} do
       conn =
         post(conn, Routes.user_registration_path(conn, :create), %{
-          "user" => %{"email" => "with spaces", "password" => "too short"}
+          "user" => %{"name" => "with spaces", "password" => "too short"}
         })
 
       response = html_response(conn, 200)

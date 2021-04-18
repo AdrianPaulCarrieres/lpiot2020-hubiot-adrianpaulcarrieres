@@ -4,12 +4,12 @@ defmodule Hubiot.AccountsFixtures do
   entities via the `Hubiot.Accounts` context.
   """
 
-  def unique_user_email, do: "user#{System.unique_integer()}@example.com"
+  def unique_user_name, do: "user#{System.unique_integer()}@example.com"
   def valid_user_password, do: "hello world!"
 
   def valid_user_attributes(attrs \\ %{}) do
     Enum.into(attrs, %{
-      email: unique_user_email(),
+      name: unique_user_name(),
       password: valid_user_password()
     })
   end

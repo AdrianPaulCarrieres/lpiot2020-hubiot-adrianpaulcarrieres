@@ -22,11 +22,11 @@ defmodule HubiotWeb.UserConfirmationControllerTest do
     test "sends a new confirmation token", %{conn: conn, user: user} do
       conn =
         post(conn, Routes.user_confirmation_path(conn, :create), %{
-          "user" => %{"email" => user.email}
+          "user" => %{"name" => user.name}
         })
 
       assert redirected_to(conn) == "/"
-      assert get_flash(conn, :info) =~ "If your email is in our system"
+      assert get_flash(conn, :info) =~ "If your name is in our system"
       assert Repo.get_by!(Accounts.UserToken, user_id: user.id).context == "confirm"
     end
 
@@ -35,22 +35,22 @@ defmodule HubiotWeb.UserConfirmationControllerTest do
 
       conn =
         post(conn, Routes.user_confirmation_path(conn, :create), %{
-          "user" => %{"email" => user.email}
+          "user" => %{"name" => user.name}
         })
 
       assert redirected_to(conn) == "/"
-      assert get_flash(conn, :info) =~ "If your email is in our system"
+      assert get_flash(conn, :info) =~ "If your name is in our system"
       refute Repo.get_by(Accounts.UserToken, user_id: user.id)
     end
 
-    test "does not send confirmation token if email is invalid", %{conn: conn} do
+    test "does not send confirmation token if name is invalid", %{conn: conn} do
       conn =
         post(conn, Routes.user_confirmation_path(conn, :create), %{
-          "user" => %{"email" => "unknown@example.com"}
+          "user" => %{"name" => "unknown@example.com"}
         })
 
       assert redirected_to(conn) == "/"
-      assert get_flash(conn, :info) =~ "If your email is in our system"
+      assert get_flash(conn, :info) =~ "If your name is in our system"
       assert Repo.all(Accounts.UserToken) == []
     end
   end
@@ -84,7 +84,7 @@ defmodule HubiotWeb.UserConfirmationControllerTest do
       refute get_flash(conn, :error)
     end
 
-    test "does not confirm email with invalid token", %{conn: conn, user: user} do
+    test "does not confirm name with invalid token", %{conn: conn, user: user} do
       conn = get(conn, Routes.user_confirmation_path(conn, :confirm, "oops"))
       assert redirected_to(conn) == "/"
       assert get_flash(conn, :error) =~ "User confirmation link is invalid or it has expired"

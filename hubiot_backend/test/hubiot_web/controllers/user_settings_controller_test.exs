@@ -35,7 +35,7 @@ defmodule HubiotWeb.UserSettingsControllerTest do
       assert redirected_to(new_password_conn) == Routes.user_settings_path(conn, :edit)
       assert get_session(new_password_conn, :user_token) != get_session(conn, :user_token)
       assert get_flash(new_password_conn, :info) =~ "Password updated successfully"
-      assert Accounts.get_user_by_email_and_password(user.email, "new valid password")
+      assert Accounts.get_user_by_name_and_password(user.name, "new valid password")
     end
 
     test "does not update password on invalid data", %{conn: conn} do
@@ -59,27 +59,27 @@ defmodule HubiotWeb.UserSettingsControllerTest do
     end
   end
 
-  describe "PUT /users/settings (change email form)" do
+  describe "PUT /users/settings (change name form)" do
     @tag :capture_log
-    test "updates the user email", %{conn: conn, user: user} do
+    test "updates the user name", %{conn: conn, user: user} do
       conn =
         put(conn, Routes.user_settings_path(conn, :update), %{
-          "action" => "update_email",
+          "action" => "update_name",
           "current_password" => valid_user_password(),
-          "user" => %{"email" => unique_user_email()}
+          "user" => %{"name" => unique_user_name()}
         })
 
       assert redirected_to(conn) == Routes.user_settings_path(conn, :edit)
-      assert get_flash(conn, :info) =~ "A link to confirm your email"
-      assert Accounts.get_user_by_email(user.email)
+      assert get_flash(conn, :info) =~ "A link to confirm your name"
+      assert Accounts.get_user_by_name(user.name)
     end
 
-    test "does not update email on invalid data", %{conn: conn} do
+    test "does not update name on invalid data", %{conn: conn} do
       conn =
         put(conn, Routes.user_settings_path(conn, :update), %{
-          "action" => "update_email",
+          "action" => "update_name",
           "current_password" => "invalid",
-          "user" => %{"email" => "with spaces"}
+          "user" => %{"name" => "with spaces"}
         })
 
       response = html_response(conn, 200)
@@ -89,40 +89,40 @@ defmodule HubiotWeb.UserSettingsControllerTest do
     end
   end
 
-  describe "GET /users/settings/confirm_email/:token" do
+  describe "GET /users/settings/confirm_name/:token" do
     setup %{user: user} do
-      email = unique_user_email()
+      name = unique_user_name()
 
       token =
         extract_user_token(fn url ->
-          Accounts.deliver_update_email_instructions(%{user | email: email}, user.email, url)
+          Accounts.deliver_update_name_instructions(%{user | name: name}, user.name, url)
         end)
 
-      %{token: token, email: email}
+      %{token: token, name: name}
     end
 
-    test "updates the user email once", %{conn: conn, user: user, token: token, email: email} do
-      conn = get(conn, Routes.user_settings_path(conn, :confirm_email, token))
+    test "updates the user name once", %{conn: conn, user: user, token: token, name: name} do
+      conn = get(conn, Routes.user_settings_path(conn, :confirm_name, token))
       assert redirected_to(conn) == Routes.user_settings_path(conn, :edit)
-      assert get_flash(conn, :info) =~ "Email changed successfully"
-      refute Accounts.get_user_by_email(user.email)
-      assert Accounts.get_user_by_email(email)
+      assert get_flash(conn, :info) =~ "name changed successfully"
+      refute Accounts.get_user_by_name(user.name)
+      assert Accounts.get_user_by_name(name)
 
-      conn = get(conn, Routes.user_settings_path(conn, :confirm_email, token))
+      conn = get(conn, Routes.user_settings_path(conn, :confirm_name, token))
       assert redirected_to(conn) == Routes.user_settings_path(conn, :edit)
-      assert get_flash(conn, :error) =~ "Email change link is invalid or it has expired"
+      assert get_flash(conn, :error) =~ "name change link is invalid or it has expired"
     end
 
-    test "does not update email with invalid token", %{conn: conn, user: user} do
-      conn = get(conn, Routes.user_settings_path(conn, :confirm_email, "oops"))
+    test "does not update name with invalid token", %{conn: conn, user: user} do
+      conn = get(conn, Routes.user_settings_path(conn, :confirm_name, "oops"))
       assert redirected_to(conn) == Routes.user_settings_path(conn, :edit)
-      assert get_flash(conn, :error) =~ "Email change link is invalid or it has expired"
-      assert Accounts.get_user_by_email(user.email)
+      assert get_flash(conn, :error) =~ "name change link is invalid or it has expired"
+      assert Accounts.get_user_by_name(user.name)
     end
 
     test "redirects if user is not logged in", %{token: token} do
       conn = build_conn()
-      conn = get(conn, Routes.user_settings_path(conn, :confirm_email, token))
+      conn = get(conn, Routes.user_settings_path(conn, :confirm_name, token))
       assert redirected_to(conn) == Routes.user_session_path(conn, :new)
     end
   end

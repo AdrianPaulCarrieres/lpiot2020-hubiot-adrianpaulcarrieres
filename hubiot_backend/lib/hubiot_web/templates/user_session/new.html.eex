@@ -7,8 +7,8 @@
     </div>
   <% end %>
 
-  <%= label f, :email %>
-  <%= email_input f, :email, required: true %>
+  <%= label f, :name %>
+  <%= text_input f, :name, required: true %>
 
   <%= label f, :password %>
   <%= password_input f, :password, required: true %>

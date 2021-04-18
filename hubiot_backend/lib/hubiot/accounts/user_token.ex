@@ -6,10 +6,10 @@ defmodule Hubiot.Accounts.UserToken do
   @rand_size 32
 
   # It is very important to keep the reset password token expiry short,
-  # since someone with access to the email may take over the account.
+  # since someone with access to the name may take over the account.
   @reset_password_validity_in_days 1
   @confirm_validity_in_days 7
-  @change_email_validity_in_days 7
+  @change_name_validity_in_days 7
   @session_validity_in_days 60
 
   schema "users_tokens" do
@@ -49,13 +49,13 @@ defmodule Hubiot.Accounts.UserToken do
   @doc """
   Builds a token with a hashed counter part.
 
-  The non-hashed token is sent to the user email while the
+  The non-hashed token is sent to the user name while the
   hashed part is stored in the database, to avoid reconstruction.
   The token is valid for a week as long as users don't change
-  their email.
+  their name.
   """
-  def build_email_token(user, context) do
-    build_hashed_token(user, context, user.email)
+  def build_name_token(user, context) do
+    build_hashed_token(user, context, user.name)
   end
 
   defp build_hashed_token(user, context, sent_to) do
@@ -76,7 +76,7 @@ defmodule Hubiot.Accounts.UserToken do
 
   The query returns the user found by the token.
   """
-  def verify_email_token_query(token, context) do
+  def verify_name_token_query(token, context) do
     case Base.url_decode64(token, padding: false) do
       {:ok, decoded_token} ->
         hashed_token = :crypto.hash(@hash_algorithm, decoded_token)
@@ -85,7 +85,7 @@ defmodule Hubiot.Accounts.UserToken do
         query =
           from token in token_and_context_query(hashed_token, context),
             join: user in assoc(token, :user),
-            where: token.inserted_at > ago(^days, "day") and token.sent_to == user.email,
+            where: token.inserted_at > ago(^days, "day") and token.sent_to == user.name,
             select: user
 
         {:ok, query}
@@ -103,14 +103,14 @@ defmodule Hubiot.Accounts.UserToken do
 
   The query returns the user token record.
   """
-  def verify_change_email_token_query(token, context) do
+  def verify_change_name_token_query(token, context) do
     case Base.url_decode64(token, padding: false) do
       {:ok, decoded_token} ->
         hashed_token = :crypto.hash(@hash_algorithm, decoded_token)
 
         query =
           from token in token_and_context_query(hashed_token, context),
-            where: token.inserted_at > ago(@change_email_validity_in_days, "day")
+            where: token.inserted_at > ago(@change_name_validity_in_days, "day")
 
         {:ok, query}
 

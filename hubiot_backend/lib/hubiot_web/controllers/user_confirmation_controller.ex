@@ -7,8 +7,8 @@ defmodule HubiotWeb.UserConfirmationController do
     render(conn, "new.html")
   end
 
-  def create(conn, %{"user" => %{"email" => email}}) do
-    if user = Accounts.get_user_by_email(email) do
+  def create(conn, %{"user" => %{"name" => name}}) do
+    if user = Accounts.get_user_by_name(name) do
       Accounts.deliver_user_confirmation_instructions(
         user,
         &Routes.user_confirmation_url(conn, :confirm, &1)
@@ -19,8 +19,8 @@ defmodule HubiotWeb.UserConfirmationController do
     conn
     |> put_flash(
       :info,
-      "If your email is in our system and it has not been confirmed yet, " <>
-        "you will receive an email with instructions shortly."
+      "If your name is in our system and it has not been confirmed yet, " <>
+        "you will receive an name with instructions shortly."
     )
     |> redirect(to: "/")
   end

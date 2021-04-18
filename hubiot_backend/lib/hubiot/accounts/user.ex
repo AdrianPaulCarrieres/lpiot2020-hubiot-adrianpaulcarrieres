@@ -4,7 +4,7 @@ defmodule Hubiot.Accounts.User do
 
   @derive {Inspect, except: [:password]}
   schema "users" do
-    field :email, :string
+    field :name, :string
     field :password, :string, virtual: true
     field :hashed_password, :string
     field :confirmed_at, :naive_datetime
@@ -15,8 +15,8 @@ defmodule Hubiot.Accounts.User do
   @doc """
   A user changeset for registration.
 
-  It is important to validate the length of both email and password.
-  Otherwise databases may truncate the email without warnings, which
+  It is important to validate the length of both name and password.
+  Otherwise databases may truncate the name without warnings, which
   could lead to unpredictable or insecure behaviour. Long passwords may
   also be very expensive to hash for certain algorithms.
 
@@ -31,24 +31,23 @@ defmodule Hubiot.Accounts.User do
   """
   def registration_changeset(user, attrs, opts \\ []) do
     user
-    |> cast(attrs, [:email, :password])
-    |> validate_email()
+    |> cast(attrs, [:name, :password])
+    |> validate_name()
     |> validate_password(opts)
   end
 
-  defp validate_email(changeset) do
+  defp validate_name(changeset) do
     changeset
-    |> validate_required([:email])
-    |> validate_format(:email, ~r/^[^\s]+@[^\s]+$/, message: "must have the @ sign and no spaces")
-    |> validate_length(:email, max: 160)
-    |> unsafe_validate_unique(:email, Hubiot.Repo)
-    |> unique_constraint(:email)
+    |> validate_required([:name])
+    |> validate_length(:name, max: 160)
+    |> unsafe_validate_unique(:name, Hubiot.Repo)
+    |> unique_constraint(:name)
   end
 
   defp validate_password(changeset, opts) do
     changeset
     |> validate_required([:password])
-    |> validate_length(:password, min: 12, max: 80)
+    |> validate_length(:password, min: 5, max: 80)
     # |> validate_format(:password, ~r/[a-z]/, message: "at least one lower case character")
     # |> validate_format(:password, ~r/[A-Z]/, message: "at least one upper case character")
     # |> validate_format(:password, ~r/[!?@#$%^&*_0-9]/, message: "at least one digit or punctuation character")
@@ -69,17 +68,17 @@ defmodule Hubiot.Accounts.User do
   end
 
   @doc """
-  A user changeset for changing the email.
+  A user changeset for changing the name.
 
-  It requires the email to change otherwise an error is added.
+  It requires the name to change otherwise an error is added.
   """
-  def email_changeset(user, attrs) do
+  def name_changeset(user, attrs) do
     user
-    |> cast(attrs, [:email])
-    |> validate_email()
+    |> cast(attrs, [:name])
+    |> validate_name()
     |> case do
-      %{changes: %{email: _}} = changeset -> changeset
-      %{} = changeset -> add_error(changeset, :email, "did not change")
+      %{changes: %{name: _}} = changeset -> changeset
+      %{} = changeset -> add_error(changeset, :name, "did not change")
     end
   end
 

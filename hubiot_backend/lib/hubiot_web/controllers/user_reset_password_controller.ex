@@ -9,8 +9,8 @@ defmodule HubiotWeb.UserResetPasswordController do
     render(conn, "new.html")
   end
 
-  def create(conn, %{"user" => %{"email" => email}}) do
-    if user = Accounts.get_user_by_email(email) do
+  def create(conn, %{"user" => %{"name" => name}}) do
+    if user = Accounts.get_user_by_name(name) do
       Accounts.deliver_user_reset_password_instructions(
         user,
         &Routes.user_reset_password_url(conn, :edit, &1)
@@ -21,7 +21,7 @@ defmodule HubiotWeb.UserResetPasswordController do
     conn
     |> put_flash(
       :info,
-      "If your email is in our system, you will receive instructions to reset your password shortly."
+      "If your name is in our system, you will receive instructions to reset your password shortly."
     )
     |> redirect(to: "/")
   end

@@ -5,32 +5,32 @@ defmodule Hubiot.AccountsTest do
   import Hubiot.AccountsFixtures
   alias Hubiot.Accounts.{User, UserToken}
 
-  describe "get_user_by_email/1" do
-    test "does not return the user if the email does not exist" do
-      refute Accounts.get_user_by_email("unknown@example.com")
+  describe "get_user_by_name/1" do
+    test "does not return the user if the name does not exist" do
+      refute Accounts.get_user_by_name("unknown@example.com")
     end
 
-    test "returns the user if the email exists" do
+    test "returns the user if the name exists" do
       %{id: id} = user = user_fixture()
-      assert %User{id: ^id} = Accounts.get_user_by_email(user.email)
+      assert %User{id: ^id} = Accounts.get_user_by_name(user.name)
     end
   end
 
-  describe "get_user_by_email_and_password/2" do
-    test "does not return the user if the email does not exist" do
-      refute Accounts.get_user_by_email_and_password("unknown@example.com", "hello world!")
+  describe "get_user_by_name_and_password/2" do
+    test "does not return the user if the name does not exist" do
+      refute Accounts.get_user_by_name_and_password("unknown@example.com", "hello world!")
     end
 
     test "does not return the user if the password is not valid" do
       user = user_fixture()
-      refute Accounts.get_user_by_email_and_password(user.email, "invalid")
+      refute Accounts.get_user_by_name_and_password(user.name, "invalid")
     end
 
-    test "returns the user if the email and password are valid" do
+    test "returns the user if the name and password are valid" do
       %{id: id} = user = user_fixture()
 
       assert %User{id: ^id} =
-               Accounts.get_user_by_email_and_password(user.email, valid_user_password())
+               Accounts.get_user_by_name_and_password(user.name, valid_user_password())
     end
   end
 
@@ -48,45 +48,45 @@ defmodule Hubiot.AccountsTest do
   end
 
   describe "register_user/1" do
-    test "requires email and password to be set" do
+    test "requires name and password to be set" do
       {:error, changeset} = Accounts.register_user(%{})
 
       assert %{
                password: ["can't be blank"],
-               email: ["can't be blank"]
+               name: ["can't be blank"]
              } = errors_on(changeset)
     end
 
-    test "validates email and password when given" do
-      {:error, changeset} = Accounts.register_user(%{email: "not valid", password: "not valid"})
+    test "validates name and password when given" do
+      {:error, changeset} = Accounts.register_user(%{name: "not valid", password: "not valid"})
 
       assert %{
-               email: ["must have the @ sign and no spaces"],
+               name: ["must have the @ sign and no spaces"],
                password: ["should be at least 12 character(s)"]
              } = errors_on(changeset)
     end
 
-    test "validates maximum values for email and password for security" do
+    test "validates maximum values for name and password for security" do
       too_long = String.duplicate("db", 100)
-      {:error, changeset} = Accounts.register_user(%{email: too_long, password: too_long})
-      assert "should be at most 160 character(s)" in errors_on(changeset).email
+      {:error, changeset} = Accounts.register_user(%{name: too_long, password: too_long})
+      assert "should be at most 160 character(s)" in errors_on(changeset).name
       assert "should be at most 80 character(s)" in errors_on(changeset).password
     end
 
-    test "validates email uniqueness" do
-      %{email: email} = user_fixture()
-      {:error, changeset} = Accounts.register_user(%{email: email})
-      assert "has already been taken" in errors_on(changeset).email
+    test "validates name uniqueness" do
+      %{name: name} = user_fixture()
+      {:error, changeset} = Accounts.register_user(%{name: name})
+      assert "has already been taken" in errors_on(changeset).name
 
-      # Now try with the upper cased email too, to check that email case is ignored.
-      {:error, changeset} = Accounts.register_user(%{email: String.upcase(email)})
-      assert "has already been taken" in errors_on(changeset).email
+      # Now try with the upper cased name too, to check that name case is ignored.
+      {:error, changeset} = Accounts.register_user(%{name: String.upcase(name)})
+      assert "has already been taken" in errors_on(changeset).name
     end
 
     test "registers users with a hashed password" do
-      email = unique_user_email()
-      {:ok, user} = Accounts.register_user(valid_user_attributes(email: email))
-      assert user.email == email
+      name = unique_user_name()
+      {:ok, user} = Accounts.register_user(valid_user_attributes(name: name))
+      assert user.name == name
       assert is_binary(user.hashed_password)
       assert is_nil(user.confirmed_at)
       assert is_nil(user.password)
@@ -96,84 +96,84 @@ defmodule Hubiot.AccountsTest do
   describe "change_user_registration/2" do
     test "returns a changeset" do
       assert %Ecto.Changeset{} = changeset = Accounts.change_user_registration(%User{})
-      assert changeset.required == [:password, :email]
+      assert changeset.required == [:password, :name]
     end
 
     test "allows fields to be set" do
-      email = unique_user_email()
+      name = unique_user_name()
       password = valid_user_password()
 
       changeset =
         Accounts.change_user_registration(
           %User{},
-          valid_user_attributes(email: email, password: password)
+          valid_user_attributes(name: name, password: password)
         )
 
       assert changeset.valid?
-      assert get_change(changeset, :email) == email
+      assert get_change(changeset, :name) == name
       assert get_change(changeset, :password) == password
       assert is_nil(get_change(changeset, :hashed_password))
     end
   end
 
-  describe "change_user_email/2" do
+  describe "change_user_name/2" do
     test "returns a user changeset" do
-      assert %Ecto.Changeset{} = changeset = Accounts.change_user_email(%User{})
-      assert changeset.required == [:email]
+      assert %Ecto.Changeset{} = changeset = Accounts.change_user_name(%User{})
+      assert changeset.required == [:name]
     end
   end
 
-  describe "apply_user_email/3" do
+  describe "apply_user_name/3" do
     setup do
       %{user: user_fixture()}
     end
 
-    test "requires email to change", %{user: user} do
-      {:error, changeset} = Accounts.apply_user_email(user, valid_user_password(), %{})
-      assert %{email: ["did not change"]} = errors_on(changeset)
+    test "requires name to change", %{user: user} do
+      {:error, changeset} = Accounts.apply_user_name(user, valid_user_password(), %{})
+      assert %{name: ["did not change"]} = errors_on(changeset)
     end
 
-    test "validates email", %{user: user} do
+    test "validates name", %{user: user} do
       {:error, changeset} =
-        Accounts.apply_user_email(user, valid_user_password(), %{email: "not valid"})
+        Accounts.apply_user_name(user, valid_user_password(), %{name: "not valid"})
 
-      assert %{email: ["must have the @ sign and no spaces"]} = errors_on(changeset)
+      assert %{name: ["must have the @ sign and no spaces"]} = errors_on(changeset)
     end
 
-    test "validates maximum value for email for security", %{user: user} do
+    test "validates maximum value for name for security", %{user: user} do
       too_long = String.duplicate("db", 100)
 
       {:error, changeset} =
-        Accounts.apply_user_email(user, valid_user_password(), %{email: too_long})
+        Accounts.apply_user_name(user, valid_user_password(), %{name: too_long})
 
-      assert "should be at most 160 character(s)" in errors_on(changeset).email
+      assert "should be at most 160 character(s)" in errors_on(changeset).name
     end
 
-    test "validates email uniqueness", %{user: user} do
-      %{email: email} = user_fixture()
+    test "validates name uniqueness", %{user: user} do
+      %{name: name} = user_fixture()
 
       {:error, changeset} =
-        Accounts.apply_user_email(user, valid_user_password(), %{email: email})
+        Accounts.apply_user_name(user, valid_user_password(), %{name: name})
 
-      assert "has already been taken" in errors_on(changeset).email
+      assert "has already been taken" in errors_on(changeset).name
     end
 
     test "validates current password", %{user: user} do
       {:error, changeset} =
-        Accounts.apply_user_email(user, "invalid", %{email: unique_user_email()})
+        Accounts.apply_user_name(user, "invalid", %{name: unique_user_name()})
 
       assert %{current_password: ["is not valid"]} = errors_on(changeset)
     end
 
-    test "applies the email without persisting it", %{user: user} do
-      email = unique_user_email()
-      {:ok, user} = Accounts.apply_user_email(user, valid_user_password(), %{email: email})
-      assert user.email == email
-      assert Accounts.get_user!(user.id).email != email
+    test "applies the name without persisting it", %{user: user} do
+      name = unique_user_name()
+      {:ok, user} = Accounts.apply_user_name(user, valid_user_password(), %{name: name})
+      assert user.name == name
+      assert Accounts.get_user!(user.id).name != name
     end
   end
 
-  describe "deliver_update_email_instructions/3" do
+  describe "deliver_update_name_instructions/3" do
     setup do
       %{user: user_fixture()}
     end
@@ -181,56 +181,56 @@ defmodule Hubiot.AccountsTest do
     test "sends token through notification", %{user: user} do
       token =
         extract_user_token(fn url ->
-          Accounts.deliver_update_email_instructions(user, "current@example.com", url)
+          Accounts.deliver_update_name_instructions(user, "current@example.com", url)
         end)
 
       {:ok, token} = Base.url_decode64(token, padding: false)
       assert user_token = Repo.get_by(UserToken, token: :crypto.hash(:sha256, token))
       assert user_token.user_id == user.id
-      assert user_token.sent_to == user.email
+      assert user_token.sent_to == user.name
       assert user_token.context == "change:current@example.com"
     end
   end
 
-  describe "update_user_email/2" do
+  describe "update_user_name/2" do
     setup do
       user = user_fixture()
-      email = unique_user_email()
+      name = unique_user_name()
 
       token =
         extract_user_token(fn url ->
-          Accounts.deliver_update_email_instructions(%{user | email: email}, user.email, url)
+          Accounts.deliver_update_name_instructions(%{user | name: name}, user.name, url)
         end)
 
-      %{user: user, token: token, email: email}
+      %{user: user, token: token, name: name}
     end
 
-    test "updates the email with a valid token", %{user: user, token: token, email: email} do
-      assert Accounts.update_user_email(user, token) == :ok
+    test "updates the name with a valid token", %{user: user, token: token, name: name} do
+      assert Accounts.update_user_name(user, token) == :ok
       changed_user = Repo.get!(User, user.id)
-      assert changed_user.email != user.email
-      assert changed_user.email == email
+      assert changed_user.name != user.name
+      assert changed_user.name == name
       assert changed_user.confirmed_at
       assert changed_user.confirmed_at != user.confirmed_at
       refute Repo.get_by(UserToken, user_id: user.id)
     end
 
-    test "does not update email with invalid token", %{user: user} do
-      assert Accounts.update_user_email(user, "oops") == :error
-      assert Repo.get!(User, user.id).email == user.email
+    test "does not update name with invalid token", %{user: user} do
+      assert Accounts.update_user_name(user, "oops") == :error
+      assert Repo.get!(User, user.id).name == user.name
       assert Repo.get_by(UserToken, user_id: user.id)
     end
 
-    test "does not update email if user email changed", %{user: user, token: token} do
-      assert Accounts.update_user_email(%{user | email: "current@example.com"}, token) == :error
-      assert Repo.get!(User, user.id).email == user.email
+    test "does not update name if user name changed", %{user: user, token: token} do
+      assert Accounts.update_user_name(%{user | name: "current@example.com"}, token) == :error
+      assert Repo.get!(User, user.id).name == user.name
       assert Repo.get_by(UserToken, user_id: user.id)
     end
 
-    test "does not update email if token expired", %{user: user, token: token} do
+    test "does not update name if token expired", %{user: user, token: token} do
       {1, nil} = Repo.update_all(UserToken, set: [inserted_at: ~N[2020-01-01 00:00:00]])
-      assert Accounts.update_user_email(user, token) == :error
-      assert Repo.get!(User, user.id).email == user.email
+      assert Accounts.update_user_name(user, token) == :error
+      assert Repo.get!(User, user.id).name == user.name
       assert Repo.get_by(UserToken, user_id: user.id)
     end
   end
@@ -294,7 +294,7 @@ defmodule Hubiot.AccountsTest do
         })
 
       assert is_nil(user.password)
-      assert Accounts.get_user_by_email_and_password(user.email, "new valid password")
+      assert Accounts.get_user_by_name_and_password(user.name, "new valid password")
     end
 
     test "deletes all tokens for the given user", %{user: user} do
@@ -375,7 +375,7 @@ defmodule Hubiot.AccountsTest do
       {:ok, token} = Base.url_decode64(token, padding: false)
       assert user_token = Repo.get_by(UserToken, token: :crypto.hash(:sha256, token))
       assert user_token.user_id == user.id
-      assert user_token.sent_to == user.email
+      assert user_token.sent_to == user.name
       assert user_token.context == "confirm"
     end
   end
@@ -392,7 +392,7 @@ defmodule Hubiot.AccountsTest do
       %{user: user, token: token}
     end
 
-    test "confirms the email with a valid token", %{user: user, token: token} do
+    test "confirms the name with a valid token", %{user: user, token: token} do
       assert {:ok, confirmed_user} = Accounts.confirm_user(token)
       assert confirmed_user.confirmed_at
       assert confirmed_user.confirmed_at != user.confirmed_at
@@ -406,7 +406,7 @@ defmodule Hubiot.AccountsTest do
       assert Repo.get_by(UserToken, user_id: user.id)
     end
 
-    test "does not confirm email if token expired", %{user: user, token: token} do
+    test "does not confirm name if token expired", %{user: user, token: token} do
       {1, nil} = Repo.update_all(UserToken, set: [inserted_at: ~N[2020-01-01 00:00:00]])
       assert Accounts.confirm_user(token) == :error
       refute Repo.get!(User, user.id).confirmed_at
@@ -428,7 +428,7 @@ defmodule Hubiot.AccountsTest do
       {:ok, token} = Base.url_decode64(token, padding: false)
       assert user_token = Repo.get_by(UserToken, token: :crypto.hash(:sha256, token))
       assert user_token.user_id == user.id
-      assert user_token.sent_to == user.email
+      assert user_token.sent_to == user.name
       assert user_token.context == "reset_password"
     end
   end
@@ -489,7 +489,7 @@ defmodule Hubiot.AccountsTest do
     test "updates the password", %{user: user} do
       {:ok, updated_user} = Accounts.reset_user_password(user, %{password: "new valid password"})
       assert is_nil(updated_user.password)
-      assert Accounts.get_user_by_email_and_password(user.email, "new valid password")
+      assert Accounts.get_user_by_name_and_password(user.name, "new valid password")
     end
 
     test "deletes all tokens for the given user", %{user: user} do

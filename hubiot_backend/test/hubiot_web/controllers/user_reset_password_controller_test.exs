@@ -22,22 +22,22 @@ defmodule HubiotWeb.UserResetPasswordControllerTest do
     test "sends a new reset password token", %{conn: conn, user: user} do
       conn =
         post(conn, Routes.user_reset_password_path(conn, :create), %{
-          "user" => %{"email" => user.email}
+          "user" => %{"name" => user.name}
         })
 
       assert redirected_to(conn) == "/"
-      assert get_flash(conn, :info) =~ "If your email is in our system"
+      assert get_flash(conn, :info) =~ "If your name is in our system"
       assert Repo.get_by!(Accounts.UserToken, user_id: user.id).context == "reset_password"
     end
 
-    test "does not send reset password token if email is invalid", %{conn: conn} do
+    test "does not send reset password token if name is invalid", %{conn: conn} do
       conn =
         post(conn, Routes.user_reset_password_path(conn, :create), %{
-          "user" => %{"email" => "unknown@example.com"}
+          "user" => %{"name" => "unknown@example.com"}
         })
 
       assert redirected_to(conn) == "/"
-      assert get_flash(conn, :info) =~ "If your email is in our system"
+      assert get_flash(conn, :info) =~ "If your name is in our system"
       assert Repo.all(Accounts.UserToken) == []
     end
   end
@@ -86,7 +86,7 @@ defmodule HubiotWeb.UserResetPasswordControllerTest do
       assert redirected_to(conn) == Routes.user_session_path(conn, :new)
       refute get_session(conn, :user_token)
       assert get_flash(conn, :info) =~ "Password reset successfully"
-      assert Accounts.get_user_by_email_and_password(user.email, "new valid password")
+      assert Accounts.get_user_by_name_and_password(user.name, "new valid password")
     end
 
     test "does not reset password on invalid data", %{conn: conn, token: token} do
