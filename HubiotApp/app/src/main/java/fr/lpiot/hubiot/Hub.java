@@ -65,7 +65,10 @@ public class Hub extends AppCompatActivity {
             Socket socket = new Socket(url.build().toString());
             socket.connect();
 
-            Channel channel = socket.chan("capteur:location_1", null);
+            Bundle parameters = this.getIntent().getExtras();
+            String location = parameters.get("location").toString();
+
+            Channel channel = socket.chan("capteur:" + location, null);
 
             channel.join()
                     .receive("ignore", envelope -> System.out.println("IGNORE"))

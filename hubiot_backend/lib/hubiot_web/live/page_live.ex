@@ -9,7 +9,7 @@ defmodule HubiotWeb.PageLive do
       Iot.list_locations()
       |> Enum.sort(:asc)
 
-    location = Enum.at(locations, 0)
+    location = Enum.at(locations, 0) || "No location registered"
     code = generate_qr_code(location)
     {:ok, assign(socket, location: location, code: code, locations: locations)}
   end
