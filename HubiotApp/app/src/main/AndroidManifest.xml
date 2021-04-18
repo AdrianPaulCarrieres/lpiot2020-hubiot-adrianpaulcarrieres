@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Hubiot"
         android:usesCleartextTraffic="true">
+        <activity
+            android:name=".ui.login.LoginActivity"
+            android:label="@string/title_activity_login"></activity>
         <activity android:name=".Qr">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,9 +25,7 @@
         <activity
             android:name=".Hub"
             android:label="@string/title_activity_hub"
-            android:theme="@style/Theme.Hubiot.NoActionBar">
-
-        </activity>
+            android:theme="@style/Theme.Hubiot.NoActionBar"></activity>
     </application>
 
 </manifest>
