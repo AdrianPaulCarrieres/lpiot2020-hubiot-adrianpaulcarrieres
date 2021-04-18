@@ -12,18 +12,19 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Hubiot"
         android:usesCleartextTraffic="true">
-        <activity android:name=".Qr"></activity>
-        <activity
-            android:name=".Hub"
-            android:label="@string/title_activity_hub"
-            android:theme="@style/Theme.Hubiot.NoActionBar">
+        <activity android:name=".Qr">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity"></activity>
+        <activity
+            android:name=".Hub"
+            android:label="@string/title_activity_hub"
+            android:theme="@style/Theme.Hubiot.NoActionBar">
+
+        </activity>
     </application>
 
 </manifest>

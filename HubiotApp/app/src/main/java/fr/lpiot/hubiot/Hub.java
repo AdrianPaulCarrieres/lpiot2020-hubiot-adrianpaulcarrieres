@@ -22,7 +22,6 @@ import org.phoenixframework.channels.Socket;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 
 import fr.lpiot.hubiot.ui.data.DataViewModel;
 import fr.lpiot.hubiot.ui.presence.PresenceViewModel;
@@ -31,11 +30,8 @@ public class Hub extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
 
-    private Socket socket;
-    private Channel channel;
-
-    private ArrayList<String> users = new ArrayList<>();
-    private ArrayList<String> data = new ArrayList<>();
+    private final ArrayList<String> users = new ArrayList<>();
+    private final ArrayList<String> data = new ArrayList<>();
 
     private PresenceViewModel presenceViewModel;
     private DataViewModel dataViewModel;
@@ -66,17 +62,17 @@ public class Hub extends AppCompatActivity {
 
         try {
 
-            socket = new Socket(url.build().toString());
+            Socket socket = new Socket(url.build().toString());
             socket.connect();
 
-            channel = socket.chan("capteur:location_1", null);
+            Channel channel = socket.chan("capteur:location_1", null);
 
             channel.join()
                     .receive("ignore", envelope -> System.out.println("IGNORE"))
                     .receive("ok", envelope -> {
                         this.users.clear();
-                        for (Iterator<JsonNode> it = envelope.getPayload().get("response").get("users").iterator(); it.hasNext(); ) {
-                            String user = it.next().asText();
+                        for (JsonNode jsonNode : envelope.getPayload().get("response").get("users")) {
+                            String user = jsonNode.asText();
                             this.users.add(user);
                         }
                         System.out.println(presenceViewModel == null);
@@ -88,12 +84,9 @@ public class Hub extends AppCompatActivity {
                 System.out.println("name " + user);
 
                 this.users.add(user);
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        presenceViewModel.getData().setValue(users);
-                        System.out.println(presenceViewModel.getData().getValue().toString());
-                    }
+                runOnUiThread(() -> {
+                    presenceViewModel.getData().setValue(users);
+                    System.out.println(presenceViewModel.getData().getValue().toString());
                 });
             });
 
@@ -103,12 +96,9 @@ public class Hub extends AppCompatActivity {
 
                 this.users.remove(user);
 
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        presenceViewModel.getData().setValue(users);
-                        System.out.println(presenceViewModel.getData().getValue().toString());
-                    }
+                runOnUiThread(() -> {
+                    presenceViewModel.getData().setValue(users);
+                    System.out.println(presenceViewModel.getData().getValue().toString());
                 });
             });
 
@@ -126,12 +116,9 @@ public class Hub extends AppCompatActivity {
 
                 Collections.sort(this.data, Collections.reverseOrder());
 
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        dataViewModel.getData().setValue(data);
-                        System.out.println(dataViewModel.getData().getValue().toString());
-                    }
+                runOnUiThread(() -> {
+                    dataViewModel.getData().setValue(data);
+                    System.out.println(dataViewModel.getData().getValue().toString());
                 });
             });
 
@@ -154,9 +141,5 @@ public class Hub extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
-    }
-
-    public ArrayList<String> getUsers() {
-        return users;
     }
 }

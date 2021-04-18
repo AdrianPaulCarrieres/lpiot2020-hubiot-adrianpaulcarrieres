@@ -26,7 +26,7 @@ public class Qr extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_qr);
 
         imageView = (ImageView) findViewById(R.id.imageView);
         editText = (EditText) findViewById(R.id.editText);
