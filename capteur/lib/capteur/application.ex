@@ -18,7 +18,7 @@ defmodule Capteur.Application do
     opts = [strategy: :one_for_one, name: Capteur.Supervisor]
     Supervisor.start_link(children, opts)
 
-    Capteur.Server.start_link("location_1")
-    #Capteur.Server.start_link("salle_2")
+    Capteur.Server.start_link("salle_1")
+    Capteur.Server.start_link("salle_2")
   end
 end
