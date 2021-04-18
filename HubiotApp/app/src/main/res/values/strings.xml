@@ -11,4 +11,7 @@
     <string name="menu_home">Home</string>
     <string name="menu_presence">Presence</string>
     <string name="menu_data">Data</string>
+    <string name="identifiant">Identifiant</string>
+    <string name="mot_de_passe">Mot de passe</string>
+    <string name="buttonLogin">Se connecter</string>
 </resources>

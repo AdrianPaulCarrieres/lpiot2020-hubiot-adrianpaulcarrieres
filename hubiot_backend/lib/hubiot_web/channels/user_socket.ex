@@ -16,8 +16,17 @@ defmodule HubiotWeb.UserSocket do
   # See `Phoenix.Token` documentation for examples in
   # performing token verification on connect.
   @impl true
-  def connect(_params, socket, _connect_info) do
-    {:ok, socket}
+  def connect(params, socket, _connect_info) do
+    %{"email" => email, "password" => password} = params
+
+    case Hubiot.Accounts.get_user_by_email_and_password(email, password) do
+      %Hubiot.Accounts.User{email: email} ->
+        socket = assign(socket, :name, email)
+        {:ok, socket}
+
+      _ ->
+        {:error, %{reason: "unauthorized"}}
+    end
   end
 
   # Socket id's are topics that allow you to identify all sockets for a given user:
